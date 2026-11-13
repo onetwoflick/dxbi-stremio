@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const css = readFileSync(root + "dxbi.theme.css", "utf8").replace(/^\/\*\*[\s\S]*?\*\/\s*/, "");
+const css = readFileSync(root + "dxbi.theme.css", "utf8").replace(/\r\n/g, "\n").replace(/^\/\*\*[\s\S]*?\*\/\s*/, "");
 const file = root + "dxbi.plugin.js";
 const js = readFileSync(file, "utf8");
 const re = /\/\*@bundled-theme\*\/"(?:[^"\\]|\\.)*"/;

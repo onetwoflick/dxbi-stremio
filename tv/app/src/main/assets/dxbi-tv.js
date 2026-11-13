@@ -187,6 +187,29 @@
     /* No streaming server runs on the TV itself (debrid streams don't need one): no nagging bar */
     [class*="board-warning-container"] { display: none !important; }
     .dxtv-toast { position: fixed; left: 50%; bottom: 48px; z-index: 2147483600; transform: translateX(-50%); padding: 14px 22px; border-radius: 10px; background: rgba(20,20,20,.94); color: #fff; font: 500 16px Inter, system-ui, sans-serif; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+    /* TV Zero-Latency Compositing & Containment Defaults */
+    .dx-card-focused [class*="poster-container"]::after,
+    [class*="meta-item-container"].dx-card-focused [class*="poster-container"]::after {
+      opacity: 1 !important;
+      box-shadow: none !important;
+    }
+    .dx-tv [class*="meta-row-container"],
+    .dx-tv [class*="board-content-"]:not([class*="board-content-container"]) > [class*="board-row"],
+    .dx-tv [class*="discover-content"] [class*="meta-row-container"],
+    .dx-tv [class*="search-content"] [class*="meta-row-container"] {
+      contain: layout paint style;
+      content-visibility: auto;
+    }
+    .dx-tv [class*="meta-item-container"] {
+      contain: layout paint style;
+      content-visibility: auto;
+    }
+    .dx-tv [class*="meta-items-container"],
+    .dx-tv .dx-hero,
+    .dx-tv .dx-hero-slide {
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+    }
   `;
   function ensureStyle() {
     if (document.getElementById("dxtv-style")) return;

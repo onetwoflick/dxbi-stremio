@@ -4,10 +4,10 @@
  * @version 2.17.0
  * @author dx.bi
  * @requirements ["dxbi.plugin.js"]
- * @updateUrl https://raw.githubusercontent.com/notdxbi/dxbi-stremio/main/dxbi.theme.css
+ * @updateUrl https://raw.githubusercontent.com/onetwoflick/dxbi-stremio/main/dxbi.theme.css
  */
 /* dx.bi — Copyright (C) 2026 dx.bi. Free software under the GNU General Public License, version 3
-   or later (see LICENSE and NOTICE.md at github.com/notdxbi/dxbi-stremio). Versions up to 2.15.9: MIT. */
+   or later (see LICENSE and NOTICE.md at github.com/onetwoflick/dxbi-stremio). Versions up to 2.15.9: MIT. */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Bebas+Neue&display=swap");
 
@@ -4802,22 +4802,38 @@ html.dx-tv {
     --dx-row-hot: 1;
 }
 
-/* TV titles: the selection moves at once, with a ring in the highlight colour. Lifts and zooms
-   that faded in and out left the last title looking selected for a moment on slower sticks. */
+/* TV titles: the selection moves at once, with a ring in the highlight colour.
+   Pre-rendered border on ::after with GPU opacity compositing eliminates box-shadow repaints. */
 .dx-tv #app [class*="meta-item-container"],
 .dx-tv #app [class*="meta-item-container"] [class*="poster-container"],
-.dx-tv #app [class*="meta-item-container"] [class*="poster-container"]::after,
 .dx-tv #app [class*="meta-item-container"] [class*="poster-image-layer"] {
     transition: none !important;
 }
 
 .dx-tv #app [class*="meta-item-container"] [class*="poster-image-layer"] {
-    transform: none !important;
+    transform: translateZ(0) !important;
+}
+
+.dx-tv #app [class*="meta-item-container"] [class*="poster-container"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 3.5px solid var(--dx-focus, #fff);
+    box-shadow: none !important;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    transform: translateZ(0);
+    transition: opacity 0.1s ease-out !important;
 }
 
 .dx-tv #app [class*="meta-item-container"]:focus-within [class*="poster-container"]::after,
-.dx-tv body #app [class*="discover-content"] [class*="meta-item-container"].selected:focus-within:not(.hovered):not(.active) [class*="poster-container"]::after {
-    box-shadow: inset 0 0 0 3px var(--dx-focus, #fff);
+.dx-tv #app [class*="meta-item-container"].dx-card-focused [class*="poster-container"]::after,
+.dx-tv body #app [class*="discover-content"] [class*="meta-item-container"].selected:focus-within:not(.hovered):not(.active) [class*="poster-container"]::after,
+.dx-tv body #app [class*="discover-content"] [class*="meta-item-container"].dx-card-focused [class*="poster-container"]::after {
+    opacity: 1 !important;
+    box-shadow: none !important;
 }
 
 /* TV: a stick's graphics chip redraws whatever moves or is blurred, every frame, and the remote
@@ -4838,11 +4854,39 @@ html.dx-tv {
     transition: none !important;
 }
 
-/* TV: Home rows well out of view aren't drawn at all until you get near them. Every frame that
-   changed anything reworked all twenty-odd rows, which held the jump from row to row back. */
-.dx-tv #app [class*="board-content-"]:not([class*="board-content-container"]) > [class*="board-row"] {
+/* TV: GPU Compositor promotion for 60fps scrolling tracks */
+.dx-tv #app [class*="meta-items-container"],
+.dx-tv #app [class*="horizontal-scroll"],
+.dx-tv .dx-hero,
+.dx-tv .dx-hero-slide {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* TV: Home, Discover, Search, and Library rows well out of view aren't drawn at all until near them.
+   CSS Containment skips layout and paint calculations for off-screen rows. */
+.dx-tv #app [class*="board-content-"]:not([class*="board-content-container"]) > [class*="board-row"],
+.dx-tv #app [class*="meta-row-container"],
+.dx-tv #app [class*="discover-content"] [class*="meta-row-container"],
+.dx-tv #app [class*="search-content"] [class*="meta-row-container"],
+.dx-tv #app [class*="library-content"] [class*="meta-row-container"] {
+    contain: layout paint style;
     content-visibility: auto;
     contain-intrinsic-size: auto 380px;
+}
+
+/* TV: Poster card containment isolates card layout from row layout tree */
+.dx-tv #app [class*="meta-item-container"] {
+    contain: layout paint style;
+    content-visibility: auto;
+    contain-intrinsic-size: 180px 270px;
+}
+
+.dx-tv #app [class*="meta-item-container"]:focus-within,
+.dx-tv #app [class*="meta-item-container"].dx-card-focused {
+    contain: style;
+    content-visibility: visible;
 }
 
 .dx-tv #app [class*="meta-row"] > [class*="meta-items-container"] {
@@ -4858,7 +4902,7 @@ html.dx-tv {
 }
 
 .dx-tv #app [class*="meta-item-container"] [class*="poster-container"] {
-    transform: none !important;
+    transform: translateZ(0) !important;
     scale: none !important;
 }
 

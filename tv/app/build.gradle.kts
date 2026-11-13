@@ -20,7 +20,7 @@ fun signingValue(key: String, env: String): String? = keystoreProps.getProperty(
 
 // Where the app looks for its updates: the repository it was built from (GitHub Actions says which), so
 // a fork's TVs follow the fork's own releases rather than being offered builds signed with another key
-val updateRepo = System.getenv("DXBI_UPDATE_REPO") ?: System.getenv("GITHUB_REPOSITORY") ?: "notdxbi/dxbi-stremio"
+val updateRepo = System.getenv("DXBI_UPDATE_REPO") ?: System.getenv("GITHUB_REPOSITORY") ?: "onetwoflick/dxbi-stremio"
 
 android {
     namespace = "com.notdxbi.dxbi.tv"
@@ -65,11 +65,16 @@ android {
     signingConfigs {
         create("release") {
             val store = signingValue("storeFile", "DXBI_TV_KEYSTORE")
-            if (store != null) {
+            if (store != null && rootProject.file(store).exists()) {
                 storeFile = rootProject.file(store)
                 storePassword = signingValue("storePassword", "DXBI_TV_KEYSTORE_PASSWORD")
                 keyAlias = signingValue("keyAlias", "DXBI_TV_KEY_ALIAS")
                 keyPassword = signingValue("keyPassword", "DXBI_TV_KEY_PASSWORD")
+            } else if (rootProject.file("release.keystore").exists()) {
+                storeFile = rootProject.file("release.keystore")
+                storePassword = "dxbi1234"
+                keyAlias = "dxbi-tv"
+                keyPassword = "dxbi1234"
             }
         }
     }
@@ -85,7 +90,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (signingValue("storeFile", "DXBI_TV_KEYSTORE") != null) signingConfig = signingConfigs.getByName("release")
+            val releaseConfig = signingConfigs.getByName("release")
+            if (releaseConfig.storeFile != null && releaseConfig.storeFile!!.exists()) signingConfig = releaseConfig
         }
         // A release build to test on a phone: as fast as a release (shrunk, optimised, not debuggable),
         // signed with the debug key and installed beside the released app like a debug build

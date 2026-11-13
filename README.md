@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/notdxbi/dxbi-stremio/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/notdxbi/dxbi-stremio?label=release&color=e50914&style=flat-square"></a>
+  <a href="https://github.com/onetwoflick/dxbi-stremio/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/onetwoflick/dxbi-stremio?label=release&color=e50914&style=flat-square"></a>
   <img alt="Windows · macOS · Linux · Android TV · Fire TV · Android · iPhone · Web" src="https://img.shields.io/badge/Windows%20·%20macOS%20·%20Linux%20·%20Android%20TV%20·%20Fire%20TV%20·%20Android%20·%20iPhone%20·%20Web-222?style=flat-square">
   <a href="NOTICE.md"><img alt="GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-222?style=flat-square"></a>
   <a href="https://discord.gg/nnVBjqZ84F"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?style=flat-square&logo=discord&logoColor=white"></a>
@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/notdxbi/dxbi-stremio/releases/download/v2.15.9/dxbi-promo.mp4"><b>▶ Watch the 1-minute preview</b></a> (computer and TV)
+  <a href="https://github.com/onetwoflick/dxbi-stremio/releases/download/v2.15.9/dxbi-promo.mp4"><b>▶ Watch the 1-minute preview</b></a> (computer and TV)
 </p>
 
 <p align="center">
@@ -43,12 +43,12 @@ Pick your device below. It takes about two minutes.
 
 | Device | Download |
 |---|---|
-| Windows 10 and 11 | [**Download for Windows**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-Setup-x64.exe) |
-| Mac with an Apple chip (M1, M2, M3, M4…) | [**Download for Mac (Apple chip)**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-mac-arm64.dmg) |
-| Mac with an Intel chip | [**Download for Mac (Intel)**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-mac-x64.dmg) |
-| Linux | [**Download for Linux**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-linux-x86_64.AppImage) |
+| Windows 10 and 11 | [**Download for Windows**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-Setup-x64.exe) |
+| Mac with an Apple chip (M1, M2, M3, M4…) | [**Download for Mac (Apple chip)**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-mac-arm64.dmg) |
+| Mac with an Intel chip | [**Download for Mac (Intel)**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-mac-x64.dmg) |
+| Linux | [**Download for Linux**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-linux-x86_64.AppImage) |
 | Android TV, Google TV, Fire TV | [**See the TV steps**](#on-a-tv) |
-| Android phone or tablet | [**Download for Android**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-mobile.apk) · [steps](#on-an-android-phone) |
+| Android phone or tablet | [**Download for Android**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-mobile.apk) · [steps](#on-an-android-phone) |
 | iPhone | [**See the iPhone steps**](#on-an-iphone) |
 | Any browser | [**Open dx.bi on the web**](https://notdxbi.github.io/dxbi-web/) (debrid and direct streams; torrents need the app) |
 
@@ -70,7 +70,7 @@ dx.bi sets up Stremio's streaming server by itself (it's what plays torrents), a
 <summary>Prefer not to install anything?</summary>
 <br>
 
-Download [`dxbi-portable-x64.exe`](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-portable-x64.exe) instead: it runs straight away, without installing.
+Download [`dxbi-portable-x64.exe`](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-portable-x64.exe) instead: it runs straight away, without installing.
 </details>
 
 ### On a Mac
@@ -102,7 +102,7 @@ xattr -dr com.apple.quarantine /Applications/dx.bi.app
 <summary>It doesn't open?</summary>
 <br>
 
-Some distributions need *FUSE* for AppImages. On Ubuntu and Debian: `sudo apt install libfuse2`. On a Raspberry Pi or another ARM computer, download [`dxbi-linux-arm64.AppImage`](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-linux-arm64.AppImage) instead.
+Some distributions need *FUSE* for AppImages. On Ubuntu and Debian: `sudo apt install libfuse2`. On a Raspberry Pi or another ARM computer, download [`dxbi-linux-arm64.AppImage`](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-linux-arm64.AppImage) instead.
 </details>
 
 ### On a TV
@@ -121,7 +121,7 @@ dx.bi TV runs on Android TV, Google TV and Fire TV (Fire TV Sticks, Cubes and Fi
 9614380
 ```
 
-Select **Go**. (The code is a short link to the latest dx.bi TV. If it doesn't work, type the full address instead: `github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-tv.apk`) When the download finishes, choose **Install**, then **Open**.
+Select **Go**. (The code is a short link to the latest dx.bi TV. If it doesn't work, type the full address instead: `github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-tv.apk`) When the download finishes, choose **Install**, then **Open**.
 
 **4. Sign in** with your Stremio account. dx.bi is now in your TV's apps.
 
@@ -139,7 +139,7 @@ Good to know:
 
 dx.bi for Android is its own app, made for phones and tablets: native screens with Home, Discover, Search, Addons and Profile tabs, a player worked by touch, downloads, Chromecast and picture-in-picture. It installs next to dx.bi TV and doesn't replace it.
 
-**1. Download it.** On the phone, open [**dxbi-mobile.apk**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi-mobile.apk).
+**1. Download it.** On the phone, open [**dxbi-mobile.apk**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi-mobile.apk).
 
 **2. Install it.** Open the download. The first time, Android asks whether your browser (or Files app) may install apps: choose **Settings**, turn it on, go back, and choose **Install**.
 
@@ -158,7 +158,7 @@ dx.bi for iPhone (iOS 18 or later) has its own screens in Apple's style, Liquid 
 
 **1. Get a sideloading app.** [SideStore](https://sidestore.io) (refreshes the app on the phone itself), [AltStore](https://altstore.io) or, from a computer, [Sideloadly](https://sideloadly.io). Set it up with your Apple ID as its site explains.
 
-**2. Download dx.bi.** On the phone, open [**dxbi.ipa**](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi.ipa) and save it to Files (or download it on the computer for Sideloadly).
+**2. Download dx.bi.** On the phone, open [**dxbi.ipa**](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi.ipa) and save it to Files (or download it on the computer for Sideloadly).
 
 **3. Install it** with the sideloading app (in SideStore or AltStore: *My Apps → +*, then choose dxbi.ipa). Then **sign in** with your Stremio account.
 
@@ -195,13 +195,13 @@ You can add dx.bi to [Stremio Enhanced](https://github.com/REVENGE977/stremio-en
 1. Run one command. On Windows, open *PowerShell* and paste:
 
    ```powershell
-   irm https://github.com/notdxbi/dxbi-stremio/releases/latest/download/install.ps1 | iex
+   irm https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/install.ps1 | iex
    ```
 
    On macOS or Linux, open *Terminal* and paste:
 
    ```bash
-   curl -fsSL https://github.com/notdxbi/dxbi-stremio/releases/latest/download/install.sh | bash
+   curl -fsSL https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/install.sh | bash
    ```
 
 2. Restart Stremio Enhanced.
@@ -214,7 +214,7 @@ Updates are offered automatically inside Stremio Enhanced.
 <summary>Prefer to install the plugin by hand?</summary>
 <br>
 
-1. Download [`dxbi.plugin.js`](https://github.com/notdxbi/dxbi-stremio/releases/latest/download/dxbi.plugin.js).
+1. Download [`dxbi.plugin.js`](https://github.com/onetwoflick/dxbi-stremio/releases/latest/download/dxbi.plugin.js).
 2. In Stremio Enhanced, go to *Settings → Enhanced*, open *Open Plugins Folder* and put the file there.
 3. Restart and switch the plugin on.
 
@@ -598,7 +598,7 @@ Check that you both typed the same code and are on dx.bi 2.6.0 or newer. Parties
 
 ### Something overlaps after a Stremio update
 
-Stremio changes its interface now and then. Post it in **#bug-reports** on the [dx.bi Discord](https://discord.gg/nnVBjqZ84F) or [open an issue](https://github.com/notdxbi/dxbi-stremio/issues), with a screenshot.
+Stremio changes its interface now and then. Post it in **#bug-reports** on the [dx.bi Discord](https://discord.gg/nnVBjqZ84F) or [open an issue](https://github.com/onetwoflick/dxbi-stremio/issues), with a screenshot.
 
 <br>
 
