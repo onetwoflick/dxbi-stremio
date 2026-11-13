@@ -53,7 +53,7 @@
 		},
 		"publish": {
 			"provider": "github",
-			"owner": "notdxbi",
+			"owner": "onetwoflick",
 			"repo": "dxbi-stremio"
 		},
 		"asarUnpack": [
