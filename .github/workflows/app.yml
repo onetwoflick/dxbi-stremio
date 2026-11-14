@@ -66,18 +66,21 @@ jobs:
           if-no-files-found: error
 
       - name: Attach to the release
-        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         shell: bash
         # each platform only makes some of these kinds of file; latest*.yml and the block maps are
         # what the app's self-updater reads (core/AutoUpdate.ts, Windows and Linux only). The Mac app
         # doesn't update itself, so Mac releases carry just the .dmg
         run: |
           TAG="${{ github.event.release.tag_name }}"
-          if [ -z "$TAG" ]; then
-            TAG="${GITHUB_REF#refs/tags/}"
+          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
+            TAG="v$(cat version)"
           fi
           if [ "${{ matrix.target }}" = "mac" ]; then rm -f release-builds/latest-mac.yml release-builds/*.blockmap; fi
-          FILES=$(ls release-builds/*.exe release-builds/*.dmg release-builds/*.AppImage release-builds/latest*.yml release-builds/*.blockmap 2>/dev/null)
-          gh release upload "$TAG" $FILES --clobber || gh release create "$TAG" $FILES --title "$TAG" --notes "Release $TAG"
+          shopt -s nullglob
+          FILES=(release-builds/*.exe release-builds/*.dmg release-builds/*.AppImage release-builds/latest*.yml release-builds/*.blockmap)
+          if [ ${#FILES[@]} -gt 0 ]; then
+            gh release upload "$TAG" "${FILES[@]}" --clobber || gh release create "$TAG" "${FILES[@]}" --title "$TAG" --notes "Release $TAG"
+          fi
         env:
           GH_TOKEN: ${{ github.token }}

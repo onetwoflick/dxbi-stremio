@@ -64,11 +64,11 @@ jobs:
           cp ../dxbi.theme.css ./dxbi.theme.css
 
       - name: Attach to the release
-        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         run: |
           TAG="${{ github.event.release.tag_name }}"
-          if [ -z "$TAG" ]; then
-            TAG="${GITHUB_REF#refs/tags/}"
+          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
+            TAG="v$(cat ../app/version)"
           fi
           gh release upload "$TAG" dxbi-tv.apk dxbi-mobile.apk dxbi.plugin.js dxbi.theme.css --clobber || gh release create "$TAG" dxbi-tv.apk dxbi-mobile.apk dxbi.plugin.js dxbi.theme.css --title "$TAG" --notes "Release $TAG"
         env:
