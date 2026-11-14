@@ -7,6 +7,11 @@ tools/prev/
 *.webm
 *.wav
 
+*.apk
+app/release-builds/
+app/mpv/
+tv/local.properties
+
 # Cloudflare Worker local secrets
 .dev.vars
 .wrangler/
