@@ -1,7 +1,7 @@
 /**
  * @name dx.bi
  * @description Netflix-style Stremio: billboard, carousels and hover previews, reviews and ratings, skip intro and up next, a better player, watch parties and more. The dx.bi look is built in.
- * @version 2.37.9
+ * @version 2.37.10
  * @author dx.bi
  * @updateUrl https://raw.githubusercontent.com/onetwoflick/dxbi-stremio/main/dxbi.plugin.js
  */
@@ -19,7 +19,7 @@
   // Stremio Enhanced loads each plugin as <script id="<file name>">, which tells us our settings key
   const SCRIPT_ID = (document.currentScript && document.currentScript.id) || "dxbi.plugin.js";
   const PLUGIN_KEY = SCRIPT_ID.replace(/\.plugin\.js$/, "");
-  const PLUGIN_VERSION = "2.37.9"; // kept in step with @version by tools/bundle-theme.mjs
+  const PLUGIN_VERSION = "2.37.10"; // kept in step with @version by tools/bundle-theme.mjs
   // Recent messages and errors, kept for problem reports (see `report`)
   const recent = { logs: [], errors: [] };
   const remember = (list, text) => {
@@ -609,6 +609,96 @@
     window.dispatchEvent(new PopStateEvent("popstate", { state: history.state }));
   }
 
+  // Exact card tracking for back navigation: restore focus to the clicked card rather than jumping to the row above
+  let lastClickedCard = null;
+
+  function rememberClickedCard(card) {
+    if (!card) return;
+    const info = cardInfo(card);
+    const link = card.querySelector('a[href]') || (card.matches && card.matches('a[href]') ? card : null);
+    const href = (info && info.href) || (link && link.getAttribute('href')) || "";
+    const id = (info && info.id) || (card.dataset && card.dataset.dxKey) || "";
+    const row = card.closest('[class*="meta-row-container"], [class*="board-row"], [class*="continue-watching-row"]') || card.parentElement;
+    const rows = (typeof keyNav !== "undefined" && keyNav.rows) ? keyNav.rows() : [];
+    const rowIdx = rows.indexOf(row);
+    const track = card.parentElement;
+    const list = (track && typeof keyNav !== "undefined" && keyNav.cards) ? keyNav.cards(track) : [];
+    const cardIdx = list.indexOf(card);
+    const route = currentRoute();
+    lastClickedCard = {
+      href,
+      id,
+      type: info && info.type,
+      title: info && info.title,
+      rowIdx,
+      cardIdx,
+      route,
+      time: Date.now()
+    };
+  }
+
+  function findCardByHrefOrId(href, id) {
+    if (href) {
+      try {
+        const el = document.querySelector(`#app [class*="meta-item-container"] a[href="${CSS.escape(href)}"]`);
+        if (el) return el.closest('[class*="meta-item-container"]');
+      } catch (_) {}
+    }
+    const cards = document.querySelectorAll('#app [class*="meta-item-container"]');
+    for (const c of cards) {
+      if (href) {
+        const a = c.querySelector('a[href]');
+        if (a && a.getAttribute('href') === href) return c;
+      }
+      if (id) {
+        if (c.dataset && c.dataset.dxKey && c.dataset.dxKey.includes(id)) return c;
+        const info = cardInfo(c);
+        if (info && info.id === id) return c;
+      }
+    }
+    return null;
+  }
+
+  function restoreLastClickedCard() {
+    if (!lastClickedCard) return false;
+    if (Date.now() - lastClickedCard.time > 300000) {
+      lastClickedCard = null;
+      return false;
+    }
+    let target = findCardByHrefOrId(lastClickedCard.href, lastClickedCard.id);
+    if (!target && lastClickedCard.rowIdx >= 0 && typeof keyNav !== "undefined" && keyNav.rows) {
+      const rows = keyNav.rows();
+      const row = rows[lastClickedCard.rowIdx];
+      if (row) {
+        const track = row.querySelector('[class*="meta-items-container"]') || row;
+        const cards = keyNav.cards(track);
+        target = cards[lastClickedCard.cardIdx] || cards[0];
+      }
+    }
+    if (target && target.isConnected) {
+      if (typeof keyNav !== "undefined" && keyNav.go) {
+        keyNav.go(target);
+      }
+      target.scrollIntoView({ block: "center", inline: "center", behavior: "instant" });
+      const row = target.closest('[class*="meta-row-container"], [class*="board-row"], [class*="continue-watching-row"]');
+      if (row && typeof updateArrows === "function") updateArrows(row);
+      const link = target.querySelector('a[href], [tabindex]') || target;
+      link.focus({ preventScroll: true });
+      lastClickedCard = null;
+      return true;
+    }
+    return false;
+  }
+
+  function scheduleRestoreLastClickedCard() {
+    if (!lastClickedCard) return;
+    for (const ms of [0, 60, 180, 350, 700]) {
+      setTimeout(() => {
+        if (lastClickedCard) restoreLastClickedCard();
+      }, ms);
+    }
+  }
+
   // Decode an image ahead of time so showing it later costs nothing; the last few stay in memory
   const decoded = new Map();
   function decodeImage(url) {
@@ -895,13 +985,17 @@
 
   function updateRoute() {
     const route = currentRoute();
-    if (document.body.dataset.dxRoute !== route) {
+    const prevRoute = document.body.dataset.dxRoute;
+    if (prevRoute !== route) {
       document.body.dataset.dxRoute = route;
       setScrolled(false);
       preview.close(true);
       if (route === "player") keyNav.exit();
       miniPlayer.onRoute(route);
       if (route === "board") homeRows.preload();
+      if ((prevRoute === "detail" || prevRoute === "player") && (route === "board" || route === "discover" || route === "library")) {
+        scheduleRestoreLastClickedCard();
+      }
     }
   }
 
@@ -1784,6 +1878,8 @@
 
   // Stremio navigates from its own copy of the link, so the click has to be caught before it
   const onCardOpen = (e) => {
+    const card = e.target.closest && e.target.closest('#app [class*="meta-item-container"]');
+    if (card) rememberClickedCard(card);
     const link = e.target.closest && e.target.closest("a[data-dx-episodes]");
     if (!link || e.target.closest('[class*="play-icon"], [class*="dismiss-icon-layer"]')) return;
     e.preventDefault();
@@ -2024,6 +2120,7 @@
         }
         const go = e.target.closest("[data-href]");
         if (go) {
+          if (this.card) rememberClickedCard(this.card);
           this.close(true);
           navigate(go.dataset.href);
         }
@@ -2541,6 +2638,12 @@
         return;
       }
       this.afterPick(e);
+      if (e.key === "Enter" || e.key === "Select") {
+        const focused = document.activeElement;
+        const card = (focused && focused.closest && focused.closest('#app [class*="meta-item-container"]'))
+          || (preview.card && preview.el && preview.el.contains(focused) ? preview.card : null);
+        if (card) rememberClickedCard(card);
+      }
       if (!NAV_KEYS.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
       // A held direction on a TV remote repeats faster than a stick can draw: the presses queued up
       // and the selection kept going after the button was let go. Repeats pass at a steady pace.
@@ -2658,6 +2761,7 @@
       const box0 = focused && focused !== document.body && focused.getBoundingClientRect();
       const lost = !focused || focused === document.body || (box0 && box0.width >= window.innerWidth * 0.8 && box0.height >= window.innerHeight * 0.6);
       if (lost) {
+        if (lastClickedCard && restoreLastClickedCard()) return;
         // Nothing selected yet: start on the page itself (the billboard, or its first title), or in
         // whatever dialog is showing over it. Only what can actually be seen counts.
         // TV: the billboard's first button when it's in sight and nothing covers it, without
@@ -16122,6 +16226,7 @@
     document.addEventListener("click", (e) => quickPlay.onClick(e), true);
     document.addEventListener("mouseout", onOut, { passive: true });
     window.addEventListener("hashchange", onHash);
+    window.addEventListener("popstate", () => scheduleRestoreLastClickedCard());
     window.addEventListener("resize", onResize);
     document.addEventListener("visibilitychange", onHash);
     document.addEventListener("click", onSoundClick, true);
