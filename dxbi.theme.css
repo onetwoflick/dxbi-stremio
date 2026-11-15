@@ -4967,12 +4967,12 @@ html.dx-tv {
     filter: brightness(0.45);
 }
 
-/* TV: smooth responsive gliding for carousels and board scrolling */
+/* TV: smooth responsive gliding for carousels and board scrolling controlled by JS */
 .dx-tv [class*="board-content-"],
 .dx-tv [class*="discover-content"],
 .dx-tv [class*="library-content"],
 .dx-tv [class*="meta-items-container"] {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
 }
 

@@ -248,7 +248,7 @@
     .dx-tv [class*="discover-content"],
     .dx-tv [class*="library-content"],
     .dx-tv [class*="meta-items-container"] {
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
       -webkit-overflow-scrolling: touch;
     }
     .dx-btn:focus,
