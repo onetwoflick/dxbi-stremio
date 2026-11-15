@@ -55,7 +55,10 @@ jobs:
               }' release.json > post.json
           cat post.json
           if [ "$SEND" = "true" ]; then
-            [ -n "$WEBHOOK" ] || { echo "DISCORD_RELEASE_WEBHOOK is not set"; exit 1; }
+            if [ -z "$WEBHOOK" ]; then
+              echo "DISCORD_RELEASE_WEBHOOK is not set; skipping Discord announcement."
+              exit 0
+            fi
             curl -fsS -H "Content-Type: application/json" -d @post.json "$WEBHOOK"
             echo "posted"
           else
