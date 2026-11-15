@@ -210,6 +210,13 @@
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
     }
+    .dx-tv [class*="board-content-"],
+    .dx-tv [class*="discover-content"],
+    .dx-tv [class*="library-content"],
+    .dx-tv [class*="meta-items-container"] {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
     .dx-btn:focus,
     .dx-btn.dx-focused,
     .dx-btn:focus-visible {

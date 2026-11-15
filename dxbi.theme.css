@@ -4968,10 +4968,13 @@ html.dx-tv {
     filter: brightness(0.45);
 }
 
-/* TV: the page jumps instead of gliding, so the selection never waits off screen for a slow scroll
-   (rows still glide sideways: the plugin asks for that itself) */
-.dx-tv #app * {
-    scroll-behavior: auto !important;
+/* TV: smooth responsive gliding for carousels and board scrolling */
+.dx-tv [class*="board-content-"],
+.dx-tv [class*="discover-content"],
+.dx-tv [class*="library-content"],
+.dx-tv [class*="meta-items-container"] {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* TV: the hover card's glow and soft shadow are big blurred layers redrawn as it opens */
