@@ -1216,6 +1216,12 @@ html[data-dx-lite] .dx-hero-dot.is-active::after {
     z-index: 2;
 }
 
+.dx-tv #app [class*="metadetails-content"] [class*="meta-links"] a,
+.dx-tv #app [class*="metadetails-content"] [class*="runtime-release-info-container"] a,
+.dx-tv #app .dx-scores {
+    outline: none !important;
+}
+
 /* Shared rating / meta pills */
 .dx-imdb {
     display: inline-flex;
@@ -2130,6 +2136,9 @@ html[data-dx-lite] .dx-hero-dot.is-active::after {
     transition: background-color 0.2s;
 }
 
+#app [class*="video-container"]:focus,
+#app [class*="video-container"]:focus-within,
+#app [class*="video-container"].dx-focused,
 #app [class*="video-container"]:hover,
 #app [class*="video-container"]:focus-visible {
     background: rgba(255, 255, 255, 0.06);
@@ -2174,6 +2183,9 @@ html[data-dx-lite] .dx-hero-dot.is-active::after {
     transition: background-color 0.2s, transform 0.2s var(--dx-ease-out);
 }
 
+#app [class*="streams-list-container"] [class*="stream-container"]:focus,
+#app [class*="streams-list-container"] [class*="stream-container"]:focus-within,
+#app [class*="streams-list-container"] [class*="stream-container"].dx-focused,
 #app [class*="streams-list-container"] [class*="stream-container"]:hover,
 #app [class*="streams-list-container"] [class*="stream-container"]:focus-visible {
     background: rgba(255, 255, 255, 0.07);
@@ -4062,6 +4074,12 @@ body[data-dx-ptitle] #app .custom-episode-title {
     z-index: 2;
 }
 
+.dx-tv #app [class*="metadetails-content"] [class*="meta-links"] a,
+.dx-tv #app [class*="metadetails-content"] [class*="runtime-release-info-container"] a,
+.dx-tv #app .dx-scores {
+    outline: none !important;
+}
+
 #app [class*="metadetails-content"] > :not([class*="meta-preview"]):not([class*="spacing"]):not([class*="streams-list"]):not([class*="videos-list"]):first-of-type,
 #app [class*="metadetails-content"] > [class*="spacing"] + :not([class*="streams-list"]):not([class*="videos-list"]) {
     margin-top: 0.75rem !important;
@@ -4114,9 +4132,14 @@ body[data-dx-ptitle] #app .custom-episode-title {
     --dxv-tile: rgba(255, 255, 255, 0.09);
 }
 
+#app [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:focus,
+#app [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:focus-within,
+#app [class*="streams-list-container"] [class*="streams-container"] > [data-dxv].dx-focused,
 #app [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:hover,
 #app [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:focus-visible {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.15) !important;
+    outline: 2px solid #fff !important;
+    outline-offset: -2px !important;
     transform: none;
     --dxv-tile: var(--dx-accent);
 }
@@ -4782,6 +4805,12 @@ html.dx-tv {
 
 /* TV: what the remote is on must be plain to see from the sofa. A white ring on everything but
    titles (they lift and open their card). See All always shows: it's at the end of each row. */
+.dx-tv #app [class*="metadetails-content"] [class*="meta-links"] a,
+.dx-tv #app [class*="metadetails-content"] [class*="runtime-release-info-container"] a,
+.dx-tv #app .dx-scores {
+    outline: none !important;
+}
+
 .dx-tv #app :is(a, button, input, [tabindex]):not([class*="meta-item-link"]):focus-visible {
     outline: 3px solid var(--dx-focus, #fff) !important;
     outline-offset: 3px;
@@ -4791,6 +4820,12 @@ html.dx-tv {
     /* above its neighbours, so none of them paints over the ring (z-index needs no position here:
        the controls are flex items) */
     z-index: 2;
+}
+
+.dx-tv #app [class*="metadetails-content"] [class*="meta-links"] a,
+.dx-tv #app [class*="metadetails-content"] [class*="runtime-release-info-container"] a,
+.dx-tv #app .dx-scores {
+    outline: none !important;
 }
 
 /* controls drawn square get softened corners, so their ring isn't boxy */

@@ -235,6 +235,24 @@
     .dx-hero.has-focus {
       z-index: 5 !important;
     }
+    [class*="streams-list-container"] [class*="stream-container"]:focus,
+    [class*="streams-list-container"] [class*="stream-container"]:focus-within,
+    [class*="streams-list-container"] [class*="stream-container"].dx-focused,
+    [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:focus,
+    [class*="streams-list-container"] [class*="streams-container"] > [data-dxv]:focus-within,
+    [class*="streams-list-container"] [class*="streams-container"] > [data-dxv].dx-focused,
+    [class*="video-container"]:focus,
+    [class*="video-container"]:focus-within,
+    [class*="video-container"].dx-focused {
+      background: rgba(255, 255, 255, 0.15) !important;
+      outline: 2px solid #fff !important;
+      outline-offset: -2px !important;
+    }
+    [class*="metadetails-content"] [class*="meta-links"] a,
+    [class*="metadetails-content"] [class*="runtime-release-info-container"] a,
+    .dx-scores {
+      outline: none !important;
+    }
   `;
   function ensureStyle() {
     if (document.getElementById("dxtv-style")) return;
