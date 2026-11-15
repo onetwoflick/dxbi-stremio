@@ -48,8 +48,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Disable Spotlight on macOS
+        if: runner.os == 'macOS'
+        run: sudo mdutil -a -i off || true
+
       - name: Build
-        run: npm run build:${{ matrix.target }}:${{ matrix.arch }} -- --publish never
+        run: npm run build:${{ matrix.target }}:${{ matrix.arch }} -- --publish never || (sleep 5 && npm run build:${{ matrix.target }}:${{ matrix.arch }} -- --publish never)
         env:
           # macOS builds aren't signed: don't go looking for a certificate
           CSC_IDENTITY_AUTO_DISCOVERY: "false"

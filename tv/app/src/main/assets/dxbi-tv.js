@@ -201,14 +201,48 @@
       content-visibility: auto;
     }
     .dx-tv [class*="meta-item-container"] {
-      contain: layout paint style;
-      content-visibility: auto;
+      contain: layout style;
+    }
+    .dx-tv .dx-hero-backdrop {
+      animation: none !important;
+      transform: none !important;
+      will-change: auto;
+    }
+    .dx-tv .dx-hero-shade {
+      background:
+        linear-gradient(90deg, rgba(11, 11, 13, 0.82) 0%, rgba(11, 11, 13, 0.35) 25%, transparent 48%),
+        linear-gradient(0deg, var(--dx-bg) 0%, rgba(11, 11, 13, 0.5) 15%, transparent 30%);
     }
     .dx-tv [class*="meta-items-container"],
     .dx-tv .dx-hero,
     .dx-tv .dx-hero-slide {
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
+    }
+    .dx-preview button:focus-visible,
+    .dx-preview [tabindex]:focus-visible,
+    .dx-preview button.dx-focused,
+    .dx-preview .dx-round:focus-visible,
+    .dx-preview .dx-round.dx-focused {
+      outline: 3.5px solid #fff !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.95), 0 0 0 3px #fff !important;
+      transform: scale(1.18) !important;
+      z-index: 10 !important;
+      transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    }
+    .dx-preview .dx-round.is-primary:focus-visible,
+    .dx-preview .dx-round.is-primary.dx-focused {
+      background: #fff !important;
+      color: #000 !important;
+      outline: 3.5px solid #fff !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 22px rgba(255, 255, 255, 1), 0 0 0 3px #fff !important;
+      transform: scale(1.22) !important;
+    }
+    .dx-tv .dx-preview.is-open {
+      outline: 3px solid rgba(255, 255, 255, 0.9) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 255, 255, 0.35) !important;
     }
     .dx-tv [class*="board-content-"],
     .dx-tv [class*="discover-content"],
