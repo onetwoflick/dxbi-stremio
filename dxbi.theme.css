@@ -1111,20 +1111,38 @@ body:not(.dx-discover-picked) #app [class*="discover-content"] [class*="meta-ite
 
 /* Keyboard: the selected button comes forward in white, like a TV menu (dimming it the way the
    mouse hover does read as "off" when nothing points at it) */
+.dx-btn:focus,
+.dx-btn.dx-focused,
 .dx-btn:focus-visible {
-    background: #fff;
-    color: #000;
-    transform: scale(1.06);
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+    background: #fff !important;
+    color: #000 !important;
+    transform: scale(1.08) !important;
+    outline: 3px solid #fff !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 8px 26px rgba(0, 0, 0, 0.5) !important;
+    z-index: 10 !important;
 }
 
+.dx-btn:focus svg,
+.dx-btn.dx-focused svg,
 .dx-btn:focus-visible svg {
-    fill: #000;
+    fill: #000 !important;
 }
 
+.dx-btn-secondary:focus svg,
+.dx-btn-secondary.dx-focused svg,
 .dx-btn-secondary:focus-visible svg {
-    fill: none;
-    stroke: #000;
+    fill: none !important;
+    stroke: #000 !important;
+}
+
+.dx-hero.has-focus {
+    z-index: 5 !important;
+}
+
+.dx-hero.has-focus .dx-hero-content {
+    transform: scale(1.02);
+    transition: transform 0.25s ease;
 }
 
 .dx-hero-dots {

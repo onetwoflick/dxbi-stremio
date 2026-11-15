@@ -210,6 +210,31 @@
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
     }
+    .dx-btn:focus,
+    .dx-btn.dx-focused,
+    .dx-btn:focus-visible {
+      background: #fff !important;
+      color: #000 !important;
+      transform: scale(1.08) !important;
+      outline: 3px solid #fff !important;
+      outline-offset: 2px !important;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 8px 26px rgba(0, 0, 0, 0.5) !important;
+      z-index: 10 !important;
+    }
+    .dx-btn:focus svg,
+    .dx-btn.dx-focused svg,
+    .dx-btn:focus-visible svg {
+      fill: #000 !important;
+    }
+    .dx-btn-secondary:focus svg,
+    .dx-btn-secondary.dx-focused svg,
+    .dx-btn-secondary:focus-visible svg {
+      fill: none !important;
+      stroke: #000 !important;
+    }
+    .dx-hero.has-focus {
+      z-index: 5 !important;
+    }
   `;
   function ensureStyle() {
     if (document.getElementById("dxtv-style")) return;
