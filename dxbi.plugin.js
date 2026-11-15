@@ -1,7 +1,7 @@
 /**
  * @name dx.bi
  * @description Netflix-style Stremio: billboard, carousels and hover previews, reviews and ratings, skip intro and up next, a better player, watch parties and more. The dx.bi look is built in.
- * @version 2.37.3
+ * @version 2.37.4
  * @author dx.bi
  * @updateUrl https://raw.githubusercontent.com/onetwoflick/dxbi-stremio/main/dxbi.plugin.js
  */
@@ -19,7 +19,7 @@
   // Stremio Enhanced loads each plugin as <script id="<file name>">, which tells us our settings key
   const SCRIPT_ID = (document.currentScript && document.currentScript.id) || "dxbi.plugin.js";
   const PLUGIN_KEY = SCRIPT_ID.replace(/\.plugin\.js$/, "");
-  const PLUGIN_VERSION = "2.37.3"; // kept in step with @version by tools/bundle-theme.mjs
+  const PLUGIN_VERSION = "2.37.4"; // kept in step with @version by tools/bundle-theme.mjs
   // Recent messages and errors, kept for problem reports (see `report`)
   const recent = { logs: [], errors: [] };
   const remember = (list, text) => {
@@ -2378,102 +2378,6 @@
       || [...document.querySelectorAll(".dx-hero .dx-btn")].find((b) => b.checkVisibility({ opacityProperty: true, visibilityProperty: true }));
   }
 
-  // ---------------------------------------------------------------------------
-  // Spatial Navigation Grid: 2D array representation for O(1) D-pad navigation
-  // Eliminates getBoundingClientRect layout thrashing and DOM traversals on keydown
-  // ---------------------------------------------------------------------------
-  const SpatialGrid = {
-    rows: [],
-    cardMap: new WeakMap(),
-    lastBuild: 0,
-    dirty: true,
-
-    invalidate() {
-      this.dirty = true;
-    },
-
-    rebuildIfNeeded() {
-      const now = performance.now();
-      if (!this.dirty && this.rows.length && now - this.lastBuild < 450) return;
-      this.rebuild();
-    },
-
-    rebuild() {
-      this.dirty = false;
-      this.lastBuild = performance.now();
-      const rowElements = [...carouselRows()].filter((r) => r.offsetParent);
-      this.rows = [];
-      this.cardMap = new WeakMap();
-
-      for (let rIdx = 0; rIdx < rowElements.length; rIdx++) {
-        const rowEl = rowElements[rIdx];
-        const trackEl = rowEl.querySelector(':scope > [class*="meta-items-container"]') || rowEl.querySelector('[class*="meta-items-container"]');
-        if (!trackEl) continue;
-        const cardEls = [...trackEl.children].filter((n) => n.matches && n.matches('[class*="meta-item-container"]'));
-        if (!cardEls.length) continue;
-
-        const gridRow = {
-          rowEl,
-          trackEl,
-          cards: cardEls,
-          index: this.rows.length,
-        };
-
-        for (let cIdx = 0; cIdx < cardEls.length; cIdx++) {
-          this.cardMap.set(cardEls[cIdx], { rowIndex: gridRow.index, colIndex: cIdx });
-        }
-        this.rows.push(gridRow);
-      }
-    },
-
-    getCoord(card) {
-      this.rebuildIfNeeded();
-      let coord = this.cardMap.get(card);
-      if (!coord) {
-        this.rebuild();
-        coord = this.cardMap.get(card);
-      }
-      return coord;
-    },
-
-    getNext(card, dx, dy) {
-      const coord = this.getCoord(card);
-      if (!coord) return null;
-      const { rowIndex, colIndex } = coord;
-
-      if (dx !== 0) {
-        const curRow = this.rows[rowIndex];
-        if (!curRow) return null;
-        const targetCol = colIndex + dx;
-        if (targetCol >= 0 && targetCol < curRow.cards.length) {
-          return { card: curRow.cards[targetCol], row: curRow.rowEl, type: "card", rowIndex, colIndex: targetCol };
-        }
-        if (dx > 0) {
-          const seeAll = curRow.rowEl.querySelector('[class*="see-all-container"]');
-          if (seeAll) return { card: seeAll, row: curRow.rowEl, type: "see-all" };
-        }
-        return null;
-      }
-
-      if (dy !== 0) {
-        const targetRowIdx = rowIndex + dy;
-        if (targetRowIdx < 0) {
-          const btn = heroButton();
-          if (btn) return { card: btn, type: "hero" };
-          return null;
-        }
-        if (targetRowIdx >= this.rows.length) return null;
-
-        const targetRow = this.rows[targetRowIdx];
-        const targetCol = Math.min(colIndex, targetRow.cards.length - 1);
-        const targetCard = targetRow.cards[Math.max(0, targetCol)];
-        return { card: targetCard, row: targetRow.rowEl, type: "card", rowIndex: targetRowIdx, colIndex: targetCol };
-      }
-
-      return null;
-    },
-  };
-
   const keyNav = {
     on: false,
     lastPress: -Infinity,
@@ -2508,16 +2412,13 @@
       }, 250);
     },
 
+    // Silent metadata cache and image pre-decode (never initiates stream playback or navigation)
     predictivePrefetch(card) {
       const info = cardInfo(card);
       if (!info || !info.type || !info.id) return;
       const runPrefetch = () => {
         getInfo(info.type, info.id).catch(() => {});
         if (info.poster) decodeImage(artworkUrl(info.poster));
-        const dx = window.__dxbi;
-        if (dx && dx.findStream) {
-          dx.findStream({ type: info.type, metaId: info.id, videoId: null, hints: {} }, () => true).catch(() => {});
-        }
       };
       if (typeof window.requestIdleCallback === "function") {
         window.requestIdleCallback(runPrefetch, { timeout: 1000 });
@@ -2958,53 +2859,43 @@
       const row = track && track.parentElement && track.parentElement.closest('[class*="meta-row-container"]');
       const carousel = row && [...carouselRows()].includes(row);
       if (carousel) {
-        // Fast-path Spatial Navigation Grid (O(1) array lookup with zero layout reads)
-        const next = SpatialGrid.getNext(card, dx, dy);
-        if (next) {
-          if (next.type === "card") {
-            this.go(next.card, e);
-            if (dx) {
-              next.card.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "auto" });
-            } else if (dy) {
-              next.card.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
-              if (dy > 0) homeRows.ahead(next.rowIndex + 1);
-            }
-            return true;
-          }
-          if (next.type === "see-all") {
+        if (dx) {
+          const list = this.cards(track);
+          const next = list[list.indexOf(card) + dx];
+          if (!next) {
+            // the end of the row: its See All (the whole catalog), otherwise stay put rather than
+            // wander off to something else
             e.preventDefault();
             e.stopImmediatePropagation();
-            next.card.focus({ preventScroll: true });
-            return true;
+            const all = dx > 0 && row.querySelector('[class*="see-all-container"]');
+            if (all) all.focus({ preventScroll: true });
+            return;
           }
-          if (next.type === "hero") {
-            const btn = heroButton();
-            if (btn) {
-              e.preventDefault();
-              e.stopImmediatePropagation();
-              btn.focus({ preventScroll: true });
-              btn.closest(".dx-hero").scrollIntoView({ block: "start", behavior: SCROLL });
-              return true;
-            }
-          }
+          this.go(next, e);
+          // Past the edge, the row turns to its next page, the same as its arrows
+          const v = this.view(track);
+          const r = this.rest(next);
+          if (r.right > v.right + 2 || r.left < v.left - 2) page(row, dx);
+          return;
         }
-        if (dx) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          const all = dx > 0 && row.querySelector('[class*="see-all-container"]');
-          if (all) all.focus({ preventScroll: true });
-          return true;
+        const rows = this.rows();
+        const target = rows[rows.indexOf(row) + dy];
+        if (dy > 0) homeRows.ahead(rows.indexOf(row) + 1);
+        if (target) {
+          this.toRow(target, this.rest(card).x, e);
+          return;
         }
-        if (dy < 0 && this.rows().indexOf(row) === 0) {
+        if (dy < 0 && rows.indexOf(row) === 0) {
           const btn = heroButton();
           if (btn) {
             e.preventDefault();
             e.stopImmediatePropagation();
             btn.focus({ preventScroll: true });
             btn.closest(".dx-hero").scrollIntoView({ block: "start", behavior: SCROLL });
-            return true;
+            return;
           }
         }
+        // TV: past the first or last row, whatever else is that way (the search box, See All…)
         return IN_TV ? false : undefined;
       }
       // A grid (Discover, Library): the nearest title that way, on screen or not
@@ -7810,7 +7701,6 @@
   const onOut = (e) => preview.onOut(e);
   const onHash = () => {
     document.body.classList.remove("dx-discover-picked");
-    if (typeof SpatialGrid !== "undefined") SpatialGrid.invalidate();
     updateRoute();
     scheduleSync();
   };
